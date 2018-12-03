@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+	<title>Code Example: Phyllotaxis</title>
+	
+	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/p5.js"></script>
+	<script type="text/javascript">
+
+		const BLACK 			= 0
+		const WHITE 			= 255
+		const OPAQUE			= 0
+		const C					  = [8    ,8    ,8   ,8    ,8    ]
+		const GR 				  = [137.5,137.5,136 ,120.0,137.5] 
+		const MUTATION 		= [0.1	,-0.1 ,-0.5,0.5	 , 0   ] 
+		const MAX_TITLELEN= 13
+		const TITLE_OFFSET_Y 	= 160
+		const TXT_SIZE 		= 12
+		const SIZE 				= 400
+
+	
+		var n = 0;
+		
+		class Coordinate {
+			constructor ( _x, _y ){
+				this.x = _x
+				this.y = _y
+			}
+		}
+				
+		function setup() {
+    
+ 			canvas = createCanvas(window.innerWidth, window.innerHeight)	
+			angleMode(DEGREES)
+			ellipseMode(CENTER)
+			reset()
+			
+		}
+
+		function reset( ) {
+			n = 0;
+			background(BLACK)
+			
+			for ( let i = 0 ; i<GR.length ; i++ ){
+			
+				GR[i] =+ GR[i]+MUTATION[i]
+			
+				let centre = getOffSet(i)
+			
+				textSize(TXT_SIZE)
+				let txt = `Angle: ${GR[i]}`
+				if ( txt.length > MAX_TITLELEN+1) 
+					txt = txt.substr(0,MAX_TITLELEN) + '...' 
+				text (txt,  centre.x+TITLE_OFFSET_Y, centre.y)
+				
+			}
+		}
+
+		function makeXY (_c, _n, _gr, _xoff, _yoff) {
+				
+			let a = _n * _gr
+			let r = _c * Math.sqrt(n)
+			let x = (r * cos(a))+_xoff
+			let y = (r * sin(a))+_yoff;
+
+			let coordinate = new Coordinate( x, y)
+			
+			return (coordinate)
+		}
+
+
+		function getOffSet ( _i ) {
+
+			switch ( _i ) {
+				case 0: 
+					xoff = (width/2)/2
+					yoff = ((height/2)/2)
+					break;
+				case 1: 
+					xoff = ((width/2)/2)*3
+					yoff = ((height/2)/2)
+					break;
+				case 2: 
+					xoff = ((width/2)/2)
+					yoff = ((height/2)/2)*3
+					break;
+				case 3: 
+					xoff = ((width/2)/2)*3
+					yoff = ((height/2)/2)*3
+					break;
+				case 4:
+					xoff = (width/2)
+					yoff = (height/2)
+					break;
+			}
+
+			return ( new Coordinate( xoff, yoff))
+		}
+
+		function draw() {
+		
+			for ( let i = 0 ; i < GR.length ; i ++ ){
+
+				coordinateOffSet = getOffSet( i );				
+				let coordinate = makeXY ( C[i] , n, GR[i] , coordinateOffSet.x, coordinateOffSet.y) 
+
+				fill ( n ,coordinate.x, coordinate.y )
+				noStroke()
+				ellipse(coordinate.x,coordinate.y,C[i],C[i])
+				
+			}
+			
+			if ( n % SIZE == 0 ) {
+				reset()
+			}
+	
+			n++;
+		}
+
+
+	
+	</script>
+<body>
+
+</body>
+</html>
